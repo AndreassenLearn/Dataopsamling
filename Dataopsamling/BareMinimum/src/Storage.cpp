@@ -77,14 +77,31 @@ bool Storage::SaveNext(int8_t celsius)
 
 void Storage::PrintAll()
 {
+	// Count number of series.
+	uint16_t nSeries = 1;
+	for (uint16_t i = begin(); i != end(); ++i)
+	{
+		if (Read(i) == RECORD_RESUMED_FROM_VALUE) nSeries++;
+	}
+	
 #ifdef VERBOSE_MODE
 	Serial.println("Printing all records:");
 #else
-	Serial.println("seconds;Celsius"); // CSV header.
+	// Print CSV header.
+	Serial.print("seconds;minutes;hours");
+	for (uint16_t n = 1; n <= nSeries; ++n)
+	{
+		Serial.print(";Celsius (");
+		Serial.print(n);
+		Serial.print(")");
+	}
+	Serial.println();
 #endif
 	
 	// Print each record.
 	uint16_t streak = 0;
+	uint16_t n = 1;
+	float seconds;
 	for (uint16_t i = begin(); i != end(); ++i)
 	{
 		uint8_t record = Read(i);
@@ -103,6 +120,7 @@ void Storage::PrintAll()
 			Serial.println("Measurement was paused for an unknown duration.");
 #endif
 			streak = 0;
+			n++;
 		}
 		else
 		{
@@ -121,8 +139,14 @@ void Storage::PrintAll()
 			
 			Serial.println();
 #else
-			Serial.print((streak * _sRecordInterval));
-			Serial.print(";");
+			seconds = (streak * _sRecordInterval);
+			Serial.print((uint16_t)seconds);
+			Serial.print((double)(seconds / 60.0), 3);
+			Serial.print((double)(seconds / 3600.0), 3);
+			for(uint16_t j = 0; j < n; ++j)
+			{
+				Serial.print(";");
+			}
 			Serial.println(DataToCelsius(record));
 #endif
 			streak++;

@@ -1,6 +1,6 @@
 #pragma once
 
-#define VERBOSE_MODE
+//#define VERBOSE_MODE
 
 /* WDT prescaler setting */
 // 0 - 1024
