@@ -83,7 +83,7 @@ void ProgramFlow::ConfigureWdtInterrupt()
 	sei(); // Enable interrupts.
 }
 
-void ProgramFlow::KickWDT()
+void ProgramFlow::KickWdt()
 {
 	WDTCSR |= (1UL << WDIE); // Re-enable interrupt.
 }
@@ -102,7 +102,7 @@ void ProgramFlow::HandleButton()
 				// Button isn't being pushed and storage isn't full; go to sleep.
 				_led.Off();
 				_led.Blink(false);
-				KickWDT();
+				KickWdt();
 				Sleep();
 			}
 			break;

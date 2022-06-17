@@ -9,7 +9,7 @@
 #include "include/ProgramFlow.h"
 
 /* Port bits */
-#define BIT_ADC_TEMPERATURE_SENSOR 0
+#define BIT_ADC_TEMPERATURE_SENSOR ADC0D
 
 /* Millisecond intervals */
 #define MS_MEASURE_INTERVAL 30000 // 30s
@@ -59,7 +59,7 @@ void loop()
 {
 	currentMillis = millis();
 	
-	program.KickWDT();
+	program.KickWdt();
 	
 	// Services
 	button.Service(currentMillis);

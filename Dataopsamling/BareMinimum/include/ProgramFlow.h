@@ -27,7 +27,7 @@ public:
 	/**
 	* @brief Kick watchdog.
 	*/
-	void KickWDT();
+	void KickWdt();
 	
 	/**
 	* @brief Handle button press.
