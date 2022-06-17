@@ -5,10 +5,6 @@
 Lm335::Lm335(uint8_t bit)
 {
 	_bit = bit;
-	
-	ADCSRA |= (1UL << ADEN); // Enable ADC.
-	ADCSRA |= (1UL << ADPS0) | (1UL << ADPS1) | (1UL << ADPS2); // Set ADC clock prescaler to 128.
-	ADMUX = (1UL << REFS0) | (_bit & 0x07); // Use AVcc reference. 0x07 is a mask that ensures no change is made to b3, b4, b5, b6, and b7 regardless of the value of _bit.
 }
 
 float Lm335::GetCelcius()
@@ -58,16 +54,20 @@ int8_t Lm335::GetCelcius8Bit()
 
 void Lm335::Measure()
 {	
-	SMCR |= (1UL << SM0); // Set sleep mode: ADC noise reduction.
-	cli(); // Disable interrupts.
-	SMCR |= (1UL << SE); // Enable sleep.
-	sei(); // Enable interrupts.
-	asm("SLEEP"); // Enter sleep - and start ADC conversion.
-	SMCR &= ~(1UL << SE); // Disable sleep.
+	ADCSRA |= (1UL << ADEN); // Enable ADC.
+	ADCSRA |= (1UL << ADPS0) | (1UL << ADPS1) | (1UL << ADPS2); // Set ADC clock prescaler to 128.
+	ADMUX = (1UL << REFS0) | (_bit & 0x07); // Use AVcc reference. 0x07 is a mask that ensures no change is made to b3, b4, b5, b6, and b7 regardless of the value of _bit.
+	
+	//SMCR |= (1UL << SM0); // Set sleep mode: ADC noise reduction.
+	//cli(); // Disable interrupts.
+	//SMCR |= (1UL << SE); // Enable sleep.
+	//sei(); // Enable interrupts.
+	//asm("SLEEP"); // Enter sleep - and start ADC conversion.
+	//SMCR &= ~(1UL << SE); // Disable sleep.
 	
 	// The above can also be done using the following AVR functions.
-	//set_sleep_mode(SLEEP_MODE_ADC);
-	//sleep_mode(); // Enter sleep - and start ADC conversion.
+	set_sleep_mode(SLEEP_MODE_ADC);
+	sleep_mode(); // Enter sleep - and start ADC conversion.
 	
 	// Awake again. However, this wasn't necessarily from the ADC interrupt.
 	// Make sure conversion is done - check if ADSC is still set.
@@ -75,5 +75,5 @@ void Lm335::Measure()
 	
 	// Voltage = value * Max. voltage / resolution
 	// Voltage = (0 to 1023) * 5V / 1024
-	_readingV = ADC * (5.0 / 1024.0); // Save measurement
+	_readingV = ADC * (5.0 / 1024.0); // Save measurement.
 }
